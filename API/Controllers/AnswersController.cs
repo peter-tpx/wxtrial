@@ -23,7 +23,7 @@ namespace API.Controllers
         {
             var result = new
             {
-                name = "test",
+                name = _configuration["Identifiers:name"],
                 token = _configuration["Identifiers:token"]
             };
 
