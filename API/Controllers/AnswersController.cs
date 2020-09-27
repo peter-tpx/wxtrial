@@ -110,24 +110,15 @@ namespace API.Controllers
                     }
                 }
 
-                sorted = new List<ServiceModels.Product>();
 
-                var notListed = new List<ServiceModels.Product>();
+                var popularList =  mostPurchased.OrderByDescending(o => o.Quantity).ToList().ConvertAll(x => x.Name);
 
-                foreach (var mp in mostPurchased.OrderByDescending(o => o.Quantity))
+                sorted = products.OrderBy(x =>
                 {
-                    if (products.ToList().Exists(p => p.Name.Equals(mp.Name, StringComparison.CurrentCultureIgnoreCase)))
-                    {
-                        sorted.Add(mp);
-                    }
-                    else
-                    {
-                        notListed.Add(mp);
-                    }
-                }
+                    var index = Array.IndexOf(popularList.ToArray(), x.Name);
+                    return index < 0 ? int.MaxValue : index;
+                }).ToList();
 
-                // -- add non-listed products in history to the end 
-                sorted.AddRange(notListed.OrderByDescending(o => o.Quantity));
             }
             else
             {
