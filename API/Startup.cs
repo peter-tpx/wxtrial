@@ -1,3 +1,4 @@
+using API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -17,7 +18,13 @@ namespace API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpClient();
+
+            services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<IShopperHistoryService, ShopperHistoryService>();
+
             services.AddControllers();
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
