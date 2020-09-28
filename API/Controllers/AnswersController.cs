@@ -64,7 +64,7 @@ namespace API.Controllers
             var products = await _productService.GetProductsAsync(productUrl);
 
             
-            List<ServiceModels.Product> sorted = new List<ServiceModels.Product>();
+            List<ServiceModels.Product> sorted;
 
             if (sortOption.Equals("Low", StringComparison.CurrentCulture))
             {
@@ -86,7 +86,7 @@ namespace API.Controllers
             {
                 var historyUrl = BuildUrlWithToken(_configuration["ExternalServices:ShopperHistory"], _configuration["Identifiers:token"]);
 
-                var history = _shopperHistory.GetHistoryAsync(historyUrl).Result.ToList();
+                var history = await _shopperHistory.GetHistoryAsync(historyUrl);
 
                 var mostPurchased = new List<ServiceModels.Product>();
 
@@ -133,7 +133,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("trolleyTotal")]
-        public ActionResult<decimal> GetTrollyTotalAsync(APIModels.TrolleyManifest manifest)
+        public ActionResult<decimal> GetTrollyTotal(APIModels.TrolleyManifest manifest)
         {
             //TODO refactor - add validation to the model 
             if (!ModelState.IsValid)
