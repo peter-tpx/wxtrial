@@ -130,6 +130,33 @@ namespace API.Controllers
             return Ok(mapped);
         }
 
+
+        [HttpPost]
+        [Route("trolleyTotal")]
+        public ActionResult<decimal> GetTrollyTotalAsync(APIModels.TrolleyManifest manifest)
+        {
+            //TODO refactor - add validation to the model 
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Api parameter 'manifest' is missing or is not valid");
+            }
+
+            // Assumption:  Manifest may include only one quantity item match per product name
+            var purchased = (from prod in manifest.Products
+                let qty = manifest.Quantities.Find(x => x.Name.Equals(prod.Name, StringComparison.CurrentCultureIgnoreCase))
+                    ?.Quantity ?? 0
+                select new ServiceModels.Product() {Name = prod.Name, Quantity = qty, Price = prod.Price}).ToList();
+
+            var total = (from p in purchased
+                let itemTotal = p.Quantity * p.Price
+                let specials = manifest.Specials.Where(x => x.Quantities.Any(y => y.Name.Equals(p.Name, StringComparison.CurrentCultureIgnoreCase)))
+                select specials.Where(s => s.Quantities.Any(x => x.Quantity <= p.Quantity))
+                    .Aggregate(itemTotal, (current, s) => current - s.Total)).Sum();
+
+
+            return Ok(total);
+        }
+
         private string BuildUrlWithToken(string template, string token)
         {
             return template.Replace("[TOKEN]", token);
