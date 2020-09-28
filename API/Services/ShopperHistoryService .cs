@@ -23,11 +23,10 @@ namespace API.Services
         //Initial Draft 
         public async Task<List<ShopperHistory>> GetHistoryAsync(string url) //string url)
         {
-            var httpClient = _httpClientFactory.CreateClient("productsClient");
+            var httpClient = _httpClientFactory.CreateClient("historyClient");
 
             var request = new HttpRequestMessage(HttpMethod.Get, url);
 
-            //TODO revert back to async after initial test
             var response = await httpClient.SendAsync(request);
 
             if (!response.IsSuccessStatusCode) return new List<ShopperHistory>();

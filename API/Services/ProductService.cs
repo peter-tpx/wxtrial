@@ -25,7 +25,6 @@ namespace API.Services
 
             var request = new HttpRequestMessage(HttpMethod.Get, url);
 
-            //TODO revert back to async after initial test
             var response = await httpClient.SendAsync(request);
 
             if (!response.IsSuccessStatusCode) return new List<Product>();
